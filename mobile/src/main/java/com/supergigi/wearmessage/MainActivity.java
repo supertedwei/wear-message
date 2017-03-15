@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -12,6 +13,7 @@ import com.google.android.gms.wearable.MessageApi;
 import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
+import com.supergigi.wearmessage.share.MessageData;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -20,6 +22,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private static final String START_ACTIVITY_PATH = "/start-activity";
 
     private GoogleApiClient mGoogleApiClient;
+    private TextView text1View;
+    private TextView text2View;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 onStartWearableActivityClick();
             }
         });
+        text1View = (TextView) findViewById(R.id.text1);
+        text2View = (TextView) findViewById(R.id.text2);
     }
 
     @Override
@@ -75,13 +81,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
     private void onStartWearableActivityClick() {
+        MessageData messageData = new MessageData();
+        messageData.setText1(text1View.getText().toString());
+        messageData.setText2(text2View.getText().toString());
+        final String messageString = messageData.toJsonString();
         Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).setResultCallback(
             new ResultCallback<NodeApi.GetConnectedNodesResult>() {
                 @Override
                 public void onResult(NodeApi.GetConnectedNodesResult getConnectedNodesResult) {
                     for (final Node node : getConnectedNodesResult.getNodes()) {
                         Wearable.MessageApi.sendMessage(mGoogleApiClient, node.getId(),
-                                START_ACTIVITY_PATH, new byte[0]).setResultCallback(
+                                START_ACTIVITY_PATH, messageString.getBytes()).setResultCallback(
                                 getSendMessageResultCallback());
                     }
                 }
