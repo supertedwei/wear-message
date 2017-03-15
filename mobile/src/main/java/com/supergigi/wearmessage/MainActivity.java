@@ -96,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     }
                 }
             });
+
+        text1View.setText("");
+        text2View.setText("");
     }
 
     private ResultCallback<MessageApi.SendMessageResult> getSendMessageResultCallback() {
