@@ -1,13 +1,17 @@
 package com.supergigi.wearmessage.share;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.JSONStringer;
+import org.json.JSONTokener;
+
+import java.io.Serializable;
 
 /**
  * Created by tedwei on 3/15/17.
  */
 
-public class MessageData {
+public class MessageData implements Serializable {
 
     private String text1;
     private String text2;
@@ -38,6 +42,20 @@ public class MessageData {
         } catch (JSONException e) {
             e.printStackTrace();
             return "";
+        }
+    }
+
+    public static MessageData toMessageData(String jsonString) {
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = (JSONObject) new JSONTokener(jsonString).nextValue();
+            MessageData messageData = new MessageData();
+            messageData.setText1(jsonObject.getString("text1"));
+            messageData.setText2(jsonObject.getString("text2"));
+            return messageData;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 }
